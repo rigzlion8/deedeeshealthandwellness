@@ -21,7 +21,8 @@ const footerLinks = [
   {
     title: 'Resources',
     links: [
-      { label: 'Wellness Guides', href: '/blog' },
+      { label: 'Wellness Blog', href: '/blog' },
+      { label: 'Herbal Recipes', href: '/recipes' },
       { label: 'FAQs', href: '/faq' },
       { label: 'Support', href: '/support' },
     ],

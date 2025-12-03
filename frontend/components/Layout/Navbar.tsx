@@ -5,7 +5,7 @@ import UserMenu from '../Auth/UserMenu';
 
 const navLinks = [
   { label: 'Shop', href: '/products' },
-  { label: 'About', href: '/about' },
+  { label: 'Recipes', href: '/recipes' },
   { label: 'Wellness Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
 ];
