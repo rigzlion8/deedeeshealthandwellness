@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import UserMenu from '../Auth/UserMenu';
 
 const navLinks = [
   { label: 'Shop', href: '/products' },
@@ -46,14 +47,14 @@ const Navbar = () => {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
-          <Image src="/logo-mark.png" alt="DeeDees icon" width={32} height={32} />
+        <div className="hidden items-center gap-4 md:flex">
           <Link
             href="/appointments"
             className="rounded-full bg-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700"
           >
             Book Session
           </Link>
+          <UserMenu />
         </div>
 
         <button
@@ -87,6 +88,9 @@ const Navbar = () => {
               Book Session
             </Link>
           </nav>
+          <div className="mt-4">
+            <UserMenu />
+          </div>
         </div>
       )}
     </header>
