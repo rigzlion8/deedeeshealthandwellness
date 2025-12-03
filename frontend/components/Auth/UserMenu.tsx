@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 const UserMenu = () => {
@@ -15,18 +15,31 @@ const UserMenu = () => {
 
   if (!session?.user) {
     return (
-      <button
-        type="button"
-        onClick={() => signIn('google')}
-        className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600"
-      >
-        Sign in
-      </button>
+      <div className="flex items-center gap-2">
+        <Link
+          href="/auth/signin?callback=/admin"
+          className="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700"
+        >
+          Admin
+        </Link>
+        <Link
+          href="/auth/signin"
+          className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600"
+        >
+          Sign in
+        </Link>
+      </div>
     );
   }
 
   return (
     <div className="flex items-center gap-3">
+      <Link
+        href="/admin"
+        className="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700"
+      >
+        Admin
+      </Link>
       <Link
         href="/account"
         className="flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-700"

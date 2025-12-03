@@ -3,7 +3,6 @@ import { useEffect, useState, type ReactElement } from 'react';
 import AdminGuard from '../../../components/Admin/AdminGuard';
 import AdminLayout from '../../../components/Admin/AdminLayout';
 import ProductForm from '../../../components/Admin/ProductForm';
-import { useAdminAuth } from '../../../contexts/AdminAuthContext';
 import {
   fetchProduct,
   updateProduct,
@@ -15,7 +14,6 @@ import type { ProductType } from '../../../components/Products/ProductCard';
 
 const AdminEditProductPage: NextPageWithLayout = () => {
   const router = useRouter();
-  const { token } = useAdminAuth();
   const { id } = router.query;
   const [product, setProduct] = useState<ProductType | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,14 +36,13 @@ const AdminEditProductPage: NextPageWithLayout = () => {
   }, [id]);
 
   const handleSubmit = async (payload: ProductPayload) => {
-    if (!token || typeof id !== 'string') throw new Error('Admin token missing.');
-    await updateProduct(id, payload, token);
+    if (typeof id !== 'string') throw new Error('Product id missing.');
+    await updateProduct(id, payload);
     router.push('/admin/products');
   };
 
   const handleUpload = async (file: File) => {
-    if (!token) throw new Error('Admin token missing.');
-    return uploadImage(file, token, 'products');
+    return uploadImage(file, 'products');
   };
 
   if (loading) {

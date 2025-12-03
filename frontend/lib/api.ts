@@ -135,19 +135,17 @@ type RequestOptions = {
   method?: string;
   body?: BodyInit | null;
   headers?: HeadersInit;
-  token?: string;
   query?: Record<string, unknown>;
 };
 
 const request = async <T>(path: string, options: RequestOptions = {}): Promise<T> => {
-  const { token, headers, query, ...rest } = options;
+  const { headers, query, ...rest } = options;
   const response = await fetch(buildUrl(path, query), {
     credentials: 'include',
     ...rest,
     headers: {
       'Content-Type': 'application/json',
       ...(headers || {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
 
@@ -200,34 +198,30 @@ export const fetchProduct = async (id: string): Promise<ProductType> => {
   return request<ProductType>(`products/${id}`);
 };
 
-export const createProduct = async (payload: ProductPayload, token: string) => {
+export const createProduct = async (payload: ProductPayload) => {
   return request<ProductType>('products', {
     method: 'POST',
     body: JSON.stringify(payload),
-    token,
   });
 };
 
 export const updateProduct = async (
   id: string,
-  payload: Partial<ProductPayload>,
-  token: string
+  payload: Partial<ProductPayload>
 ) => {
   return request<ProductType>(`products/${id}`, {
     method: 'PUT',
     body: JSON.stringify(payload),
-    token,
   });
 };
 
-export const deleteProduct = async (id: string, token: string) => {
+export const deleteProduct = async (id: string) => {
   return request<{ success: boolean }>(`products/${id}`, {
     method: 'DELETE',
-    token,
   });
 };
 
-export const uploadImage = async (file: File, token: string, folder?: string) => {
+export const uploadImage = async (file: File, folder?: string) => {
   const formData = new FormData();
   formData.append('file', file);
   if (folder) formData.append('folder', folder);
@@ -236,7 +230,6 @@ export const uploadImage = async (file: File, token: string, folder?: string) =>
     method: 'POST',
     body: formData,
     credentials: 'include',
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   });
 
   if (!response.ok) {
@@ -255,11 +248,10 @@ export const fetchHeroSettings = async (): Promise<HeroSettings> => {
   }
 };
 
-export const updateHeroSettings = async (payload: Partial<HeroSettings>, token: string) => {
+export const updateHeroSettings = async (payload: Partial<HeroSettings>) => {
   return request<HeroSettings>('site/hero', {
     method: 'PUT',
     body: JSON.stringify(payload),
-    token,
   });
 };
 

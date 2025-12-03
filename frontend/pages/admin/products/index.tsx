@@ -4,11 +4,9 @@ import AdminGuard from '../../../components/Admin/AdminGuard';
 import AdminLayout from '../../../components/Admin/AdminLayout';
 import type { ProductType } from '../../../components/Products/ProductCard';
 import { deleteProduct, fetchProducts } from '../../../lib/api';
-import { useAdminAuth } from '../../../contexts/AdminAuthContext';
 import type { NextPageWithLayout } from '../../_app';
 
 const AdminProductsPage: NextPageWithLayout = () => {
-  const { token } = useAdminAuth();
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,11 +28,10 @@ const AdminProductsPage: NextPageWithLayout = () => {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!token) return;
     const confirmed = window.confirm('Delete this product?');
     if (!confirmed) return;
     try {
-      await deleteProduct(id, token);
+      await deleteProduct(id);
       await loadProducts();
     } catch (err) {
       setError((err as Error).message);

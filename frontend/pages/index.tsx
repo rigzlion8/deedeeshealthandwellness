@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next';
 import HeroBanner from '../components/Home/HeroBanner';
 import ProductGrid from '../components/Products/ProductGrid';
 import CategorySection from '../components/Home/CategorySection';
+import CheckoutButton from '../components/Cart/CheckoutButton';
 import { fetchProducts, fetchCategories, fetchHeroSettings, type HeroSettings } from '../lib/api';
 
 interface HomeProps {
@@ -63,6 +64,19 @@ const Home: React.FC<HomeProps> = ({ featuredProducts, categories, newArrivals, 
               <h3 className="text-xl font-semibold mb-2">Sustainable</h3>
               <p className="text-gray-600">Eco-friendly packaging</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Checkout CTA */}
+      <section className="py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h3 className="text-2xl font-bold text-gray-900">Ready to checkout?</h3>
+          <p className="mt-3 text-gray-600">
+            Continue with Google to complete your purchase securely.
+          </p>
+          <div className="mt-6 flex justify-center">
+            <CheckoutButton />
           </div>
         </div>
       </section>

@@ -48,12 +48,6 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
-          <Link
-            href="/appointments"
-            className="rounded-full bg-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700"
-          >
-            Book Session
-          </Link>
           <UserMenu />
         </div>
 
@@ -80,13 +74,6 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
-            <Link
-              href="/appointments"
-              className="rounded-md bg-primary-600 px-3 py-2 text-center font-semibold text-white"
-              onClick={() => setIsOpen(false)}
-            >
-              Book Session
-            </Link>
           </nav>
           <div className="mt-4">
             <UserMenu />

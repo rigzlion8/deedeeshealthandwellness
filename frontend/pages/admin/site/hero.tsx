@@ -2,12 +2,10 @@ import { useEffect, useState, type ReactElement } from 'react';
 import AdminGuard from '../../../components/Admin/AdminGuard';
 import AdminLayout from '../../../components/Admin/AdminLayout';
 import HeroForm from '../../../components/Admin/HeroForm';
-import { useAdminAuth } from '../../../contexts/AdminAuthContext';
 import { fetchHeroSettings, updateHeroSettings, uploadImage, type HeroSettings } from '../../../lib/api';
 import type { NextPageWithLayout } from '../../_app';
 
 const AdminHeroPage: NextPageWithLayout = () => {
-  const { token } = useAdminAuth();
   const [hero, setHero] = useState<HeroSettings | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -20,16 +18,14 @@ const AdminHeroPage: NextPageWithLayout = () => {
   }, []);
 
   const handleSubmit = async (payload: Partial<HeroSettings>) => {
-    if (!token) throw new Error('Admin token missing.');
-    const updated = await updateHeroSettings(payload, token);
+    const updated = await updateHeroSettings(payload);
     setHero(updated);
     setMessage('Hero banner updated successfully.');
     setTimeout(() => setMessage(null), 3000);
   };
 
   const handleUpload = async (file: File) => {
-    if (!token) throw new Error('Admin token missing.');
-    return uploadImage(file, token, 'hero');
+    return uploadImage(file, 'hero');
   };
 
   if (!hero) {

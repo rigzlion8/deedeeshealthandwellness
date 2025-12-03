@@ -12,12 +12,12 @@ import {
   FiX,
 } from 'react-icons/fi';
 import { useRouter } from 'next/router';
-import { useAdminAuth } from '../../contexts/AdminAuthContext';
+import { signOut, useSession } from 'next-auth/react';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const router = useRouter();
-  const { setToken } = useAdminAuth();
+  const { data: session } = useSession();
 
   const menuItems = [
     { icon: FiGrid, label: 'Dashboard', href: '/admin' },
@@ -76,13 +76,18 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 </span>
               </button>
               <div className="flex items-center">
-                <Image className="rounded-full" src="/logo-mark.png" alt="Admin avatar" width={32} height={32} />
-                <span className="ml-2 text-gray-700">Admin User</span>
+                <Image
+                  className="rounded-full"
+                  src={session?.user?.image || '/logo-mark.png'}
+                  alt={session?.user?.name || 'Admin avatar'}
+                  width={32}
+                  height={32}
+                />
+                <span className="ml-2 text-gray-700">{session?.user?.name || 'Admin User'}</span>
               </div>
               <button
                 onClick={() => {
-                  setToken(null);
-                  router.push('/');
+                  signOut({ callbackUrl: '/' });
                 }}
                 className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-primary-200 hover:text-primary-600"
               >
