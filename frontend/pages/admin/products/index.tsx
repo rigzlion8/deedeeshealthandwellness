@@ -117,7 +117,7 @@ const AdminProductsPage: NextPageWithLayout = () => {
                       <button
                         type="button"
                         onClick={() => handleDelete(product._id)}
-                        disabled={!token}
+                        disabled={loading}
                         className="rounded-full border border-red-200 px-4 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed"
                       >
                         Delete
