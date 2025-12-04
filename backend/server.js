@@ -13,6 +13,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/deedeeshealthandwellness';
 
+// Trust proxy (required for Fly.io and other reverse proxies)
+app.set('trust proxy', 1);
+
 // Logger configuration
 const logger = winston.createLogger({
   level: 'info',
@@ -60,6 +63,7 @@ app.use(mongoSanitize());
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'http://localhost:3001',
+  'https://deedeeshealthandwellness-frontend.fly.dev',
 ];
 
 app.use(cors({

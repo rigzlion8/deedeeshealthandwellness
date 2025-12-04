@@ -119,16 +119,21 @@ const FALLBACK_HERO: HeroSettings = {
 const buildUrl = (path: string, params?: Record<string, unknown>) => {
   const base = API_BASE_URL.replace(/\/$/, '');
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  const url = new URL(`${base}/${cleanPath}`);
+  let fullPath = `${base}/${cleanPath}`;
 
   if (params) {
+    const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value === undefined || value === null) return;
-      url.searchParams.append(key, String(value));
+      searchParams.append(key, String(value));
     });
+    const queryString = searchParams.toString();
+    if (queryString) {
+      fullPath += `?${queryString}`;
+    }
   }
 
-  return url.toString();
+  return fullPath;
 };
 
 type RequestOptions = {
