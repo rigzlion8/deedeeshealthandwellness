@@ -3,7 +3,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import React from 'react';
-import Layout from '../../components/Layout/Layout';
 import ProductGrid from '../../components/Products/ProductGrid';
 import type { ProductType } from '../../components/Products/ProductCard';
 import { fetchProducts } from '../../lib/api';
@@ -56,7 +55,7 @@ interface CategoryPageProps {
 
 const CategoryPage: NextPage<CategoryPageProps> = ({ slug, category, products }) => {
   return (
-    <Layout>
+    <>
       <Head>
         <title>{category.name} - DeeDees Health &amp; Wellness</title>
         <meta name="description" content={category.description} />
@@ -163,7 +162,7 @@ const CategoryPage: NextPage<CategoryPageProps> = ({ slug, category, products })
           </div>
         </div>
       </section>
-    </Layout>
+    </>
   );
 };
 
