@@ -4,44 +4,52 @@ import Link from 'next/link';
 
 const BLOG_POSTS = [
   {
-    slug: 'lotus-flower-serenity',
-    title: 'Lotus Flower: The Ritual of Serenity',
-    category: 'Lotus Flower',
-    image: 'https://images.unsplash.com/photo-1523419409543-0c1df022bddb?auto=format&fit=crop&w=1200&q=80',
+    slug: 'blue-lotus-serenity',
+    title: 'Blue Lotus: The Ritual of Serenity',
+    category: 'Blue Lotus',
+    image: '/images/blog/blue-lotus.jpg',
     description:
-      'Lotus petals and seed pods are used in Kenyan herbal baths, infusions, and incense to bring repose. Learn breathing techniques and steeping times for bedtime ceremonies.',
+      'The sacred Blue Lotus flower is used in herbal baths, infusions, and incense to bring deep repose. Learn breathing techniques and steeping times for bedtime ceremonies.',
   },
   {
     slug: 'clove-warming-elixir',
     title: 'Cloves & Wild Honey Warming Elixir',
     category: 'Cloves',
-    image: 'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/blog/cloves.jpg',
     description:
       'Eugenol-rich clove buds create a circulation-boosting drink when blended with honey and tamarind. We cover roasting methods, dosages, and when to sip.',
-  },
-  {
-    slug: 'ashwagandha-balance',
-    title: 'Ashwagandha for Evening Balance',
-    category: 'Ashwagandha',
-    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?auto=format&fit=crop&w=1200&q=80',
-    description:
-      'Adaptogenic root taken with coconut milk calms cortisol and anchors restful sleep. We explore Kenyan sourcing, dosage, and pairing with meditation.',
   },
   {
     slug: 'moringa-dawn-tonic',
     title: 'Moringa Dawn Tonic',
     category: 'Moringa',
-    image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/blog/moringa.jpg',
     description:
-      'Packed with chlorophyll, moringa powder blends beautifully with pineapple, ginger, and coconut water. Here’s how to build an energizing morning tonic.',
+      "Packed with chlorophyll, moringa powder blends beautifully with pineapple, ginger, and coconut water. Here's how to build an energizing morning tonic.",
+  },
+  {
+    slug: 'ashwagandha-balance',
+    title: 'Ashwagandha for Evening Balance',
+    category: 'Ashwagandha',
+    image: '/images/blog/ashwagandha.jpg',
+    description:
+      'Adaptogenic root taken with coconut milk calms cortisol and anchors restful sleep. We explore Kenyan sourcing, dosage, and pairing with meditation.',
   },
   {
     slug: 'lemongrass-cleansing-steam',
     title: 'Lemongrass Cleansing Steam',
     category: 'Lemongrass',
-    image: 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/blog/lemongrass.jpg',
     description:
       'Create a fragrant steam therapy with lemongrass, eucalyptus, and Kenyan sea salt to reset breathing and clear the mind.',
+  },
+  {
+    slug: 'coconut-oil-rituals',
+    title: 'Coconut Oil: Nature\'s Multi-Purpose Elixir',
+    category: 'Coconut Oil',
+    image: '/images/blog/coconutoils.jpg',
+    description:
+      'From hair masks to cooking, discover the versatile benefits of pure coconut oil in your daily wellness and beauty routines.',
   },
 ];
 

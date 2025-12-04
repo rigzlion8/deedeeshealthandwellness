@@ -17,44 +17,28 @@ interface HomeProps {
 
 const BLOG_POSTS = [
   {
-    slug: 'lotus-flower-serenity',
-    title: 'Lotus Flower: The Ritual of Serenity',
-    category: 'Lotus Flower',
-    image: 'https://images.unsplash.com/photo-1523419409543-0c1df022bddb?auto=format&fit=crop&w=1200&q=80',
+    slug: 'blue-lotus-serenity',
+    title: 'Blue Lotus: The Ritual of Serenity',
+    category: 'Blue Lotus',
+    image: '/images/blog/blue-lotus.jpg',
     excerpt:
-      'Discover how Kenyan lotus petals infuse calm into modern herbal teas and mindful breathwork.',
+      'Discover how the sacred Blue Lotus flower infuses calm into modern herbal teas and mindful breathwork.',
   },
   {
     slug: 'clove-warming-elixir',
     title: 'Cloves & Wild Honey Warming Elixir',
     category: 'Cloves',
-    image: 'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/blog/cloves.jpg',
     excerpt:
       'A spiced infusion for colder evenings—learn the benefits of eugenol-rich clove buds in circulation and immunity.',
-  },
-  {
-    slug: 'ashwagandha-balance',
-    title: 'Ashwagandha for Evening Balance',
-    category: 'Ashwagandha',
-    image: 'https://images.unsplash.com/photo-1502740479091-635887520276?auto=format&fit=crop&w=1200&q=80',
-    excerpt:
-      'Ancient adaptogen meets Nairobi hustle: adaptogenic tonics that calm cortisol and support sleep.',
   },
   {
     slug: 'moringa-dawn-tonic',
     title: 'Moringa Dawn Tonic',
     category: 'Moringa',
-    image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/blog/moringa.jpg',
     excerpt:
       'Packed with chlorophyll and minerals, moringa makes for a bright morning tonic when paired with pineapple.',
-  },
-  {
-    slug: 'lemongrass-cleansing-steam',
-    title: 'Lemongrass Cleansing Steam',
-    category: 'Lemongrass',
-    image: 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?auto=format&fit=crop&w=1200&q=80',
-    excerpt:
-      'A fragrant steam ritual to reset breathing—lemongrass, eucalyptus, and Kenyan sea salt.',
   },
 ];
 
@@ -77,16 +61,24 @@ const Home: React.FC<HomeProps> = ({ featuredProducts, categories, newArrivals, 
       {/* Featured Products */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
-          <ProductGrid products={featuredProducts} />
+          <h2 className="text-3xl font-bold text-center mb-8">Featured Products</h2>
+          <ProductGrid products={featuredProducts.slice(0, 3)} />
+          <div className="mt-10 text-center">
+            <Link
+              href="/products"
+              className="inline-block rounded-full bg-primary-600 px-8 py-3 text-sm font-semibold text-white shadow transition hover:bg-primary-700"
+            >
+              Shop All Products
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* New Arrivals */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">New Arrivals</h2>
-          <ProductGrid products={newArrivals} />
+          <h2 className="text-3xl font-bold text-center mb-8">New Arrivals</h2>
+          <ProductGrid products={newArrivals.slice(0, 3)} />
         </div>
       </section>
 

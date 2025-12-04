@@ -3,6 +3,7 @@ import type { ProductType } from '../components/Products/ProductCard';
 
 export type ProductQuery = {
   featured?: boolean;
+  category?: string;
   limit?: number;
   sort?: string;
   page?: number;
@@ -89,18 +90,21 @@ const MOCK_CATEGORIES: Category[] = [
     _id: 'herbal',
     name: 'Herbal Remedies',
     description: 'Roots, leaves, and blends for mindful rituals.',
+    image: '/images/categories/herbal.jpg',
     productCount: 12,
   },
   {
     _id: 'skincare',
     name: 'Skincare Rituals',
     description: 'Plant-powered topicals for radiant skin.',
+    image: '/images/categories/skincare.jpg',
     productCount: 9,
   },
   {
     _id: 'supplements',
     name: 'Supplements',
     description: 'Holistic nutrition from Kenyan botanicals.',
+    image: '/images/categories/supplements.jpg',
     productCount: 7,
   },
 ];

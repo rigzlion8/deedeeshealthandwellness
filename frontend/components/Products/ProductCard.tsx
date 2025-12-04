@@ -3,16 +3,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export type ProductType = {
-  _id: string;
-  name: string;
-  description: string;
+    _id: string;
+    name: string;
+    description: string;
   detailedDescription?: string;
-  price: number;
-  discountPrice?: number;
+    price: number;
+    discountPrice?: number;
   images: (string | { url: string })[];
-  category: string;
-  inStock: boolean;
-  rating: number;
+    category: string;
+    inStock: boolean;
+    rating: number;
   isFeatured?: boolean;
   isNewArrival?: boolean;
   sizeValue?: number;

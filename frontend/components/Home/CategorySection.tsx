@@ -15,6 +15,12 @@ interface CategorySectionProps {
   categories?: Category[];
 }
 
+const CATEGORY_IMAGES: Record<string, string> = {
+  herbal: '/images/categories/herbal.jpg',
+  skincare: '/images/categories/skincare.jpg',
+  supplements: '/images/categories/supplements.jpg',
+};
+
 const FALLBACK_CATEGORIES: Category[] = [
   {
     _id: 'herbal',
@@ -40,7 +46,13 @@ const FALLBACK_CATEGORIES: Category[] = [
 ];
 
 const CategorySection: React.FC<CategorySectionProps> = ({ categories }) => {
-  const items = categories && categories.length ? categories : FALLBACK_CATEGORIES;
+  // Use fallback categories if none provided, otherwise merge with local images
+  const items = categories && categories.length 
+    ? categories.map(cat => ({
+        ...cat,
+        image: cat.image || CATEGORY_IMAGES[cat._id || ''] || '/images/categories/herbal.jpg',
+      }))
+    : FALLBACK_CATEGORIES;
 
   return (
     <section className="py-16">

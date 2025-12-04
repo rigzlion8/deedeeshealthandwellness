@@ -16,7 +16,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products = [] }) => {
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
       {products.map((product) => (
         <ProductCard key={product._id} product={product} />
       ))}
