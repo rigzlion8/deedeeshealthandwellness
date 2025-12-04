@@ -6,6 +6,7 @@ export type ProductType = {
   _id: string;
   name: string;
   description: string;
+  detailedDescription?: string;
   price: number;
   discountPrice?: number;
   images: (string | { url: string })[];
@@ -14,6 +15,8 @@ export type ProductType = {
   rating: number;
   isFeatured?: boolean;
   isNewArrival?: boolean;
+  sizeValue?: number;
+  sizeUnit?: string;
   stockQuantity?: number;
   minStockLevel?: number;
   tags?: string[];

@@ -14,6 +14,7 @@ const defaultValues: ProductPayload = {
   slug: '',
   description: '',
   detailedDescription: '',
+  usageInstructions: '',
   price: 0,
   discountPrice: undefined,
   category: 'herbal',
@@ -21,7 +22,8 @@ const defaultValues: ProductPayload = {
   images: [],
   ingredients: [],
   benefits: [],
-  usageInstructions: '',
+  sizeValue: undefined,
+  sizeUnit: 'g',
   stockQuantity: 0,
   minStockLevel: 0,
   isFeatured: false,
@@ -30,6 +32,16 @@ const defaultValues: ProductPayload = {
   metaTitle: '',
   metaDescription: '',
 };
+
+const sizeUnits = [
+  { value: 'g', label: 'Grams (g)' },
+  { value: 'kg', label: 'Kilograms (kg)' },
+  { value: 'ml', label: 'Milliliters (ml)' },
+  { value: 'L', label: 'Liters (L)' },
+  { value: 'pcs', label: 'Pieces' },
+  { value: 'capsules', label: 'Capsules' },
+  { value: 'tablets', label: 'Tablets' },
+];
 
 const categories = ['herbal', 'skincare', 'supplements', 'teas', 'oils'];
 
@@ -126,6 +138,15 @@ const ProductForm = ({
         />
       </div>
 
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-slate-700">Usage Instructions</label>
+        <textarea
+          className="h-32 w-full rounded-xl border border-slate-200 p-3"
+          placeholder="How should customers use this product?"
+          {...form.register('usageInstructions')}
+        />
+      </div>
+
       <div className="grid gap-6 md:grid-cols-3">
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700" htmlFor="price">
@@ -163,6 +184,38 @@ const ProductForm = ({
             {categories.map((category) => (
               <option key={category} value={category}>
                 {category}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-700" htmlFor="sizeValue">
+            Product Size/Quantity
+          </label>
+          <input
+            type="number"
+            step="1"
+            id="sizeValue"
+            placeholder="e.g. 100, 250, 500"
+            className="w-full rounded-xl border border-slate-200 p-3"
+            {...form.register('sizeValue', { valueAsNumber: true })}
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-slate-700" htmlFor="sizeUnit">
+            Unit
+          </label>
+          <select
+            id="sizeUnit"
+            className="w-full rounded-xl border border-slate-200 p-3"
+            {...form.register('sizeUnit')}
+          >
+            {sizeUnits.map((unit) => (
+              <option key={unit.value} value={unit.value}>
+                {unit.label}
               </option>
             ))}
           </select>
@@ -236,14 +289,6 @@ const ProductForm = ({
             />
           </label>
         </div>
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-700">Usage Instructions</label>
-        <textarea
-          className="h-32 w-full rounded-xl border border-slate-200 p-3"
-          {...form.register('usageInstructions')}
-        />
       </div>
 
       <div className="flex justify-end">

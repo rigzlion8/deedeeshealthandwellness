@@ -33,6 +33,8 @@ export interface ProductPayload {
   ingredients?: string[];
   benefits?: string[];
   usageInstructions?: string;
+  sizeValue?: number;
+  sizeUnit?: string;
   stockQuantity?: number;
   minStockLevel?: number;
   isFeatured?: boolean;
