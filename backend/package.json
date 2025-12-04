@@ -4,7 +4,8 @@
     "main": "server.js",
     "scripts": {
       "dev": "nodemon server.js",
-      "start": "node server.js"
+      "start": "node server.js",
+      "build": "echo \"Backend build step not required\""
     },
     "dependencies": {
       "express": "^4.18.0",
