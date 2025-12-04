@@ -23,5 +23,5 @@ ENV PORT=8080
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app .
 EXPOSE 8080
-CMD ["npm", "run", "start", "--workspace=backend"]
+CMD ["npm", "run", "start"]
 
