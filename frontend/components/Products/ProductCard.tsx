@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCart } from '../../context/CartContext';
 
 export type ProductType = {
     _id: string;
@@ -33,13 +34,23 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const { addItem } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
+
   const discountPercentage = product.discountPrice 
     ? Math.round(((product.price - product.discountPrice) / product.price) * 100)
     : 0;
 
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsAdding(true);
+    addItem(product, 1);
+    setTimeout(() => setIsAdding(false), 500);
+  };
+
   return (
     <div className="group relative bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-      <Link href={`/products/${product._id}`}>
+      <Link href={`/products/${product._id}`} className="block">
         <div className="aspect-square w-full overflow-hidden rounded-t-lg bg-gray-200">
           <Image
             src={
@@ -58,36 +69,43 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </span>
           )}
         </div>
-        <div className="p-4">
+      </Link>
+      <div className="p-4">
+        <Link href={`/products/${product._id}`}>
           <h3 className="text-lg font-semibold text-gray-900 truncate">
             {product.name}
           </h3>
-          <p className="mt-1 text-sm text-gray-500 line-clamp-2">
-            {product.description}
-          </p>
-          <div className="mt-2 flex items-center justify-between">
-            <div className="flex items-center">
-              <span className={`text-2xl font-bold ${product.discountPrice ? 'text-red-600' : 'text-gray-900'}`}>
-                KSh {product.discountPrice || product.price}
+        </Link>
+        <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+          {product.description}
+        </p>
+        <div className="mt-2 flex items-center justify-between">
+          <div className="flex items-center">
+            <span className={`text-2xl font-bold ${product.discountPrice ? 'text-red-600' : 'text-gray-900'}`}>
+              KSh {product.discountPrice || product.price}
+            </span>
+            {product.discountPrice && (
+              <span className="ml-2 text-sm text-gray-500 line-through">
+                KSh {product.price}
               </span>
-              {product.discountPrice && (
-                <span className="ml-2 text-sm text-gray-500 line-through">
-                  KSh {product.price}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center">
-              <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              <span className="ml-1 text-gray-600">{product.rating}</span>
-            </div>
+            )}
           </div>
-          <button className="mt-4 w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 transition-colors duration-300">
-            Add to Cart
-          </button>
+          <div className="flex items-center">
+            <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <span className="ml-1 text-gray-600">{product.rating}</span>
+          </div>
         </div>
-      </Link>
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={isAdding}
+          className="mt-4 w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 transition-colors duration-300 disabled:cursor-not-allowed disabled:bg-slate-300"
+        >
+          {isAdding ? 'Adding...' : 'Add to Cart'}
+        </button>
+      </div>
     </div>
   );
 };

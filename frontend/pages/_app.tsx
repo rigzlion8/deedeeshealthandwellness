@@ -5,6 +5,7 @@ import Head from 'next/head';
 import { SessionProvider } from 'next-auth/react';
 import type { Session } from 'next-auth';
 import Layout from '../components/Layout/Layout';
+import { CartProvider } from '../context/CartContext';
 import '../styles/globals.css';
 
 export type NextPageWithLayout = NextPage & {
@@ -22,12 +23,14 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   return (
     <SessionProvider session={session}>
-      <Head>
-        <link rel="icon" href="/logo-mark.png" />
-        <meta name="theme-color" content="#0EA5E9" />
-        <title>DeeDees Health &amp; Wellness</title>
-      </Head>
-      {getLayout(page)}
+      <CartProvider>
+        <Head>
+          <link rel="icon" href="/logo-mark.png" />
+          <meta name="theme-color" content="#0EA5E9" />
+          <title>DeeDees Health &amp; Wellness</title>
+        </Head>
+        {getLayout(page)}
+      </CartProvider>
     </SessionProvider>
   );
 };

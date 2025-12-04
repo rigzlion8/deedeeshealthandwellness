@@ -5,6 +5,8 @@ import UserMenu from '../Auth/UserMenu';
 
 const navLinks = [
   { label: 'Shop', href: '/products' },
+  { label: 'Learn More', href: '/learn-more' },
+  { label: 'About', href: '/about' },
   { label: 'Recipes', href: '/recipes' },
   { label: 'Wellness Blog', href: '/blog' },
   { label: 'Contact', href: '/contact' },
@@ -15,7 +17,7 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-30 bg-white/95 shadow-sm backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:py-5">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 md:py-5">
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/logo-deedees-hw.svg"
