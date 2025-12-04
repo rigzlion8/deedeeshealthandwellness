@@ -9,9 +9,7 @@ RUN apt-get update -qq \
   && rm -rf /var/lib/apt/lists/*
 COPY package.json package-lock.json ./
 COPY frontend/package.json frontend/package.json
-COPY frontend/package-lock.json frontend/package-lock.json
 COPY backend/package.json backend/package.json
-COPY backend/package-lock.json backend/package-lock.json
 RUN npm install --include=dev --workspaces
 
 FROM deps AS build
