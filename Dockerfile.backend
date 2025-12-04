@@ -1,0 +1,20 @@
+# syntax=docker/dockerfile:1.7
+
+FROM node:20.18.0-slim AS base
+WORKDIR /app
+
+FROM base AS deps
+COPY package.json package-lock.json ./
+COPY backend/package.json backend/package.json
+RUN npm install --workspace=backend --omit=dev
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json package-lock.json ./
+COPY backend backend
+COPY shared shared
+EXPOSE 5000
+CMD ["npm", "run", "start", "--workspace=backend"]
+

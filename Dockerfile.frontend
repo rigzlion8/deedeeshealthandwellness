@@ -1,0 +1,39 @@
+# syntax=docker/dockerfile:1.7
+
+FROM node:20.18.0-slim AS base
+WORKDIR /app
+
+FROM base AS deps
+COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package.json
+COPY backend/package.json backend/package.json
+RUN rm -f frontend/.env.local
+RUN npm install --omit=dev --workspaces
+
+FROM base AS build
+WORKDIR /app
+ENV NEXT_PUBLIC_API_URL=/api
+ENV NEXT_PUBLIC_API_BASE_URL=/api
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
+COPY . .
+RUN npm run build --workspace=frontend
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=8080
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_PUBLIC_API_URL=/api
+ENV NEXT_PUBLIC_API_BASE_URL=/api
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
+COPY --from=build /app/frontend/.next ./frontend/.next
+COPY frontend/public frontend/public
+COPY frontend/next.config.js frontend/next.config.js
+COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package.json
+COPY shared shared
+EXPOSE 8080
+CMD ["npm", "run", "start", "--workspace=frontend"]
+

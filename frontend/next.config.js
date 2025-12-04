@@ -5,6 +5,10 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/api/auth/:path*',
+        destination: '/api/auth/:path*',
+      },
+      {
         source: '/api/:path*',
         destination: `${API_PROXY_TARGET}/api/:path*`,
       },
