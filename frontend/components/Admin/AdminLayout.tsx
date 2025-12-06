@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import {
+import { 
   FiGrid,
   FiShoppingCart,
   FiUsers,
@@ -47,16 +47,16 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 : router.pathname.startsWith(item.href);
             return (
               <Link
-                key={item.label}
-                href={item.href}
+              key={item.label}
+              href={item.href}
                 className={`flex items-center rounded-r-full p-4 text-sm font-semibold transition-colors ${
                   isActive
                     ? 'bg-primary-50 text-primary-600'
                     : 'text-gray-600 hover:bg-slate-50 hover:text-primary-600'
                 }`}
-              >
+            >
                 <item.icon className="text-lg" />
-                <span className={`ml-4 ${!sidebarOpen && 'hidden'}`}>{item.label}</span>
+              <span className={`ml-4 ${!sidebarOpen && 'hidden'}`}>{item.label}</span>
               </Link>
             );
           })}

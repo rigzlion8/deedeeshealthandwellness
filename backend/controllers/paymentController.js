@@ -76,17 +76,17 @@ class PaymentController {
     
     const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
     const password = Buffer.from(
-      `${process.env.MPESA_SHORTCODE}${process.env.MPESA_PASSKEY}${timestamp}`
+      `${process.env.MPESA_BUSINESS_SHORT_CODE}${process.env.MPESA_PASSKEY}${timestamp}`
     ).toString('base64');
 
     const payload = {
-      BusinessShortCode: process.env.MPESA_SHORTCODE,
+      BusinessShortCode: process.env.MPESA_BUSINESS_SHORT_CODE,
       Password: password,
       Timestamp: timestamp,
       TransactionType: 'CustomerPayBillOnline',
       Amount: amount,
       PartyA: `254${phoneNumber.slice(-9)}`, // Convert to Kenyan format
-      PartyB: process.env.MPESA_SHORTCODE,
+      PartyB: process.env.MPESA_BUSINESS_SHORT_CODE,
       PhoneNumber: `254${phoneNumber.slice(-9)}`,
       CallBackURL: `${process.env.BACKEND_URL}/api/payments/mpesa-callback`,
       AccountReference: `ORDER-${orderId}`,

@@ -250,6 +250,38 @@ export const uploadImage = async (file: File, folder?: string) => {
   return response.json();
 };
 
+export interface OrderPayload {
+  items: Array<{
+    productId: string;
+    quantity: number;
+    price: number;
+  }>;
+  customerInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    county: string;
+  };
+  paymentMethod: 'mpesa' | 'cod';
+  totalAmount: number;
+}
+
+export const createOrder = async (payload: OrderPayload) => {
+  return request<{ success: boolean; orderId: string; order: any }>('orders', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+};
+
+export const initiateMpesaPayment = async (orderId: string, phoneNumber: string, amount: number) => {
+  return request<{ success: boolean; message: string; data: any }>('payments/mpesa/initiate', {
+    method: 'POST',
+    body: JSON.stringify({ orderId, phoneNumber, amount }),
+  });
+};
+
 export const fetchHeroSettings = async (): Promise<HeroSettings> => {
   try {
     return await request<HeroSettings>('site/hero');

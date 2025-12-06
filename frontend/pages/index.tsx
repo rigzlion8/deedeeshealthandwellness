@@ -171,8 +171,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
     fetchHeroSettings(),
   ]);
 
-  const newArrivals = await fetchProducts({
-    sort: '-createdAt',
+  const newArrivals = await fetchProducts({ 
+    sort: '-createdAt', 
     limit: 8,
   });
 

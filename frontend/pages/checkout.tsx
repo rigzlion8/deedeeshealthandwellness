@@ -4,6 +4,7 @@ import Script from 'next/script';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useCart } from '../context/CartContext';
+import { createOrder, initiateMpesaPayment } from '../lib/api';
 
 const CheckoutPage = () => {
   const { data: session } = useSession();
@@ -16,29 +17,20 @@ const CheckoutPage = () => {
     city: '',
     county: '',
   });
-  const [paymentMethod, setPaymentMethod] = useState<'paystack' | 'cod'>('paystack');
+  const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'cod'>('mpesa');
   const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
 
   const total = useMemo(() => subtotal, [subtotal]);
-  const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '';
-  // Paystack supports NGN, GHS, USD, ZAR. We’ll charge in a supported currency and show KSh in UI.
-  const displayCurrency = process.env.NEXT_PUBLIC_DISPLAY_CURRENCY || 'KES';
-  const paystackChargeCurrencyEnv = process.env.NEXT_PUBLIC_PAYSTACK_CURRENCY || 'NGN';
-  const chargeCurrencyWhitelist = ['NGN', 'GHS', 'USD', 'ZAR'];
-  const paystackCurrency = chargeCurrencyWhitelist.includes(paystackChargeCurrencyEnv.toUpperCase())
-    ? paystackChargeCurrencyEnv.toUpperCase()
-    : 'NGN';
-  // FX rate from display currency (e.g., KES) to charge currency (e.g., NGN)
-  const fxRate = Number(process.env.NEXT_PUBLIC_PAYSTACK_FX_RATE || '1'); // e.g., set KES->NGN rate
+  const displayCurrency = 'KES'; // M-Pesa charges in KES
 
-  const handlePay = () => {
-    if (!paystackKey) {
-      setError('Payment key missing. Please set NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY.');
-      return;
-    }
-    if (!contact.email || !contact.name) {
-      setError('Please provide your name and email.');
+
+  // M-Pesa charges directly in KES, no conversion needed
+  const fxRate = 1;
+
+  const handleMpesaPay = async () => {
+    if (!contact.name || !contact.phone) {
+      setError('Please provide your name and phone number for M-Pesa payment.');
       return;
     }
     if (items.length === 0) {
@@ -48,39 +40,41 @@ const CheckoutPage = () => {
     setError(null);
     setStatus('processing');
 
-    const chargeAmount = Math.round(total * fxRate * 100); // Paystack expects lowest denomination of charge currency
+    try {
+      // Step 1: Create the order
+      const orderPayload = {
+        items: items.map(item => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        customerInfo: {
+          name: contact.name,
+          email: contact.email,
+          phone: contact.phone,
+          address: contact.address,
+          city: contact.city,
+          county: contact.county,
+        },
+        paymentMethod: 'mpesa' as const,
+        totalAmount: total,
+      };
 
-    const handler = (window as any).PaystackPop?.setup({
-      key: paystackKey,
-      email: contact.email,
-      amount: chargeAmount,
-      currency: paystackCurrency,
-      ref: `DD-${Date.now()}`,
-      metadata: {
-        name: contact.name,
-        phone: contact.phone,
-        address: contact.address,
-        city: contact.city,
-        county: contact.county,
-        cart: items,
-        displayCurrency,
-      },
-      callback: (response: any) => {
-        setStatus('success');
-        clearCart();
-      },
-      onClose: () => {
-        setStatus('idle');
-      },
-    });
+      const orderResponse = await createOrder(orderPayload);
+      const orderId = orderResponse.orderId || orderResponse.order._id;
 
-    if (!handler) {
+      // Step 2: Initiate M-Pesa payment
+      await initiateMpesaPayment(orderId, contact.phone, total);
+
+      // Step 3: Show success message and wait for callback
+      setStatus('success');
+      clearCart();
+
+    } catch (error: any) {
+      console.error('M-Pesa payment error:', error);
       setStatus('idle');
-      setError('Payment library not loaded. Please try again.');
-      return;
+      setError(error.message || 'M-Pesa payment failed. Please try again.');
     }
-
-    handler.openIframe();
   };
 
   return (
@@ -88,7 +82,6 @@ const CheckoutPage = () => {
       <Head>
         <title>Checkout | DeeDees Health &amp; Wellness</title>
       </Head>
-      <Script src="https://js.paystack.co/v1/inline.js" strategy="lazyOnload" />
       <div className="min-h-screen bg-slate-50 px-4 py-16">
         <div className="mx-auto max-w-5xl">
           <div className="flex items-center justify-between">
@@ -175,13 +168,13 @@ const CheckoutPage = () => {
                     <input
                       type="radio"
                       name="payment"
-                      value="paystack"
-                      checked={paymentMethod === 'paystack'}
-                      onChange={() => setPaymentMethod('paystack')}
+                      value="mpesa"
+                      checked={paymentMethod === 'mpesa'}
+                      onChange={() => setPaymentMethod('mpesa')}
                     />
                     <div>
-                      <p className="font-semibold text-slate-900">Card / Mobile Money (Paystack)</p>
-                      <p className="text-sm text-slate-500">Secure payment powered by Paystack.</p>
+                      <p className="font-semibold text-slate-900">M-Pesa</p>
+                      <p className="text-sm text-slate-500">Pay with M-Pesa mobile money.</p>
                     </div>
                   </label>
                   <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 hover:border-primary-200">
@@ -225,41 +218,49 @@ const CheckoutPage = () => {
                 <span>Total</span>
                 <span>KSh {total.toLocaleString()}</span>
               </div>
-              {paymentMethod === 'paystack' ? (
+              <div className="mt-3 rounded-xl bg-green-50 px-4 py-3 text-xs text-green-700">
+                <p>
+                  Payment will be processed in Kenyan Shillings (KES) via M-Pesa.
+                  You will receive an STK push on your phone to complete the payment.
+                </p>
+              </div>
+              <div>
+              {paymentMethod === 'mpesa' ? (
                 <>
                   <button
                     type="button"
-                    onClick={handlePay}
+                    onClick={handleMpesaPay}
                     disabled={status === 'processing' || items.length === 0}
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-primary-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-green-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                   >
-                    {status === 'processing' ? 'Processing...' : 'Pay with Paystack'}
+                    {status === 'processing' ? 'Processing...' : 'Pay with M-Pesa'}
                   </button>
                   <p className="mt-3 text-xs text-slate-500">
-                    Secure payment powered by Paystack. Amount charged in KES.
+                    Secure payment powered by Safaricom M-Pesa. You will receive an STK Push prompt on your phone.
                   </p>
                 </>
               ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStatus('processing');
-                      setTimeout(() => {
-                        clearCart();
-                        setStatus('success');
-                      }, 600);
-                    }}
-                    disabled={items.length === 0 || status === 'processing'}
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
-                  >
-                    {status === 'processing' ? 'Placing order...' : 'Place Order (Cash on Delivery)'}
-                  </button>
-                  <p className="mt-3 text-xs text-slate-500">
-                    You will pay when the order is delivered.
-                  </p>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStatus('processing');
+                        setTimeout(() => {
+                          clearCart();
+                          setStatus('success');
+                        }, 600);
+                      }}
+                      disabled={items.length === 0 || status === 'processing'}
+                      className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300"
+                    >
+                      {status === 'processing' ? 'Placing order...' : 'Place Order (Cash on Delivery)'}
+                    </button>
+                    <p className="mt-3 text-xs text-slate-500">
+                      You will pay when the order is delivered.
+                    </p>
                 </>
               )}
+              </div>
             </div>
           </div>
         </div>
