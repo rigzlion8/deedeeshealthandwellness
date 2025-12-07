@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
 
 const router = express.Router();
@@ -15,14 +16,68 @@ router.post('/', async (req, res) => {
       totalAmount
     } = req.body;
 
+    // Validate required fields
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        error: 'Order must contain at least one item',
+        received: { items }
+      });
+    }
+
+    if (subtotal === undefined || subtotal === null || totalAmount === undefined || totalAmount === null) {
+      return res.status(400).json({
+        error: 'Subtotal and total amount are required',
+        received: { subtotal, totalAmount }
+      });
+    }
+
+    if (!paymentMethod) {
+      return res.status(400).json({
+        error: 'Payment method is required',
+        received: { paymentMethod }
+      });
+    }
+
+    // Validate and format items
+    const validatedItems = items.map(item => {
+      if (!item.product) {
+        throw new Error('Each item must have a product ID');
+      }
+      
+      // Validate product ID is a valid MongoDB ObjectId
+      if (!mongoose.Types.ObjectId.isValid(item.product)) {
+        throw new Error(`Invalid product ID: ${item.product}`);
+      }
+
+      return {
+        product: item.product,
+        name: item.name || '',
+        price: item.price || 0,
+        discountPrice: item.discountPrice || item.price || 0,
+        quantity: item.quantity || 1,
+        image: item.image || ''
+      };
+    });
+
+    // Validate user ID if provided
+    let validatedUser = null;
+    if (user) {
+      if (!mongoose.Types.ObjectId.isValid(user)) {
+        return res.status(400).json({
+          error: 'Invalid user ID format'
+        });
+      }
+      validatedUser = user;
+    }
+
     // Create new order
     const newOrder = new Order({
-      user,
-      items,
-      shippingAddress,
+      user: validatedUser,
+      items: validatedItems,
+      shippingAddress: shippingAddress || {},
       paymentMethod,
-      subtotal,
-      totalAmount,
+      subtotal: parseFloat(subtotal) || 0,
+      totalAmount: parseFloat(totalAmount) || 0,
       paymentStatus: paymentMethod === 'cod' ? 'pending' : 'processing'
     });
 
@@ -32,9 +87,14 @@ router.post('/', async (req, res) => {
     res.status(201).json(savedOrder);
   } catch (error) {
     console.error('Error creating order:', error);
-    res.status(500).json({
+    
+    // Return 400 for validation errors, 500 for server errors
+    const statusCode = error.name === 'ValidationError' || error.message.includes('required') || error.message.includes('Invalid') ? 400 : 500;
+    
+    res.status(statusCode).json({
       error: 'Failed to create order',
-      details: error.message
+      details: error.message,
+      validationErrors: error.errors || undefined
     });
   }
 });

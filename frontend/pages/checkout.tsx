@@ -29,8 +29,8 @@ const CheckoutPage = () => {
   const fxRate = 1;
 
   const handleMpesaPay = async () => {
-    if (!contact.name || !contact.phone) {
-      setError('Please provide your name and phone number for M-Pesa payment.');
+    if (!contact.name || !contact.phone || !contact.address || !contact.city || !contact.county) {
+      setError('Please fill in all contact and delivery details.');
       return;
     }
     if (items.length === 0) {
@@ -41,27 +41,34 @@ const CheckoutPage = () => {
     setStatus('processing');
 
     try {
-      // Step 1: Create the order
+      // Step 1: Create the order (matching backend structure)
       const orderPayload = {
+        user: session?.user?.id || null, // User ID from session, or null for guest
         items: items.map(item => ({
-          productId: item.productId,
-          quantity: item.quantity,
+          product: item.productId,
+          name: item.name,
           price: item.price,
+          discountPrice: item.discountPrice || item.price,
+          quantity: item.quantity,
+          image: item.image,
         })),
-        customerInfo: {
-          name: contact.name,
-          email: contact.email,
-          phone: contact.phone,
-          address: contact.address,
+        shippingAddress: {
+          street: contact.address,
           city: contact.city,
           county: contact.county,
+          phone: contact.phone,
         },
-        paymentMethod: 'mpesa' as const,
+        paymentMethod: 'mpesa',
+        subtotal: subtotal,
         totalAmount: total,
       };
 
       const orderResponse = await createOrder(orderPayload);
-      const orderId = orderResponse.orderId || orderResponse.order._id;
+      const orderId = orderResponse._id || orderResponse.order?._id;
+
+      if (!orderId) {
+        throw new Error('Failed to create order: No order ID returned');
+      }
 
       // Step 2: Initiate M-Pesa payment
       await initiateMpesaPayment(orderId, contact.phone, total);
@@ -69,6 +76,11 @@ const CheckoutPage = () => {
       // Step 3: Show success message and wait for callback
       setStatus('success');
       clearCart();
+      
+      // Redirect to orders page after a short delay
+      setTimeout(() => {
+        window.location.href = '/orders';
+      }, 2000);
 
     } catch (error: any) {
       console.error('M-Pesa payment error:', error);

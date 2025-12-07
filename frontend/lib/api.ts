@@ -268,8 +268,8 @@ export interface OrderPayload {
   totalAmount: number;
 }
 
-export const createOrder = async (payload: OrderPayload) => {
-  return request<{ success: boolean; orderId: string; order: any }>('orders', {
+export const createOrder = async (payload: any) => {
+  return request<any>('orders', {
     method: 'POST',
     body: JSON.stringify(payload),
   });

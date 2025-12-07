@@ -4,12 +4,12 @@ const orderSchema = new mongoose.Schema({
   orderNumber: {
     type: String,
     unique: true,
-    required: true
+    required: false // Will be auto-generated in pre-save hook
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false // Allow guest orders
   },
   items: [{
     product: {
@@ -39,7 +39,7 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['mpesa', 'airtel_money', 'card', 'bank_transfer'],
+    enum: ['mpesa', 'cod', 'airtel_money', 'card', 'bank_transfer'],
     required: true
   },
   paymentStatus: {
